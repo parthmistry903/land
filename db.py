@@ -3,30 +3,24 @@ from mysql.connector import Error, ClientFlag
 import os
 import sys
 
-# Validate required environment variables
-required_vars = ["DB_HOST", "DB_NAME", "DB_USER", "DB_PASSWORD"]
-missing_vars = [var for var in required_vars if not os.environ.get(var)]
-if missing_vars:
-    print(f"ERROR: Missing required environment variables: {', '.join(missing_vars)}", file=sys.stderr)
-    sys.exit(1)
-
+# Read variables with safe defaults for local development
 DB_CONFIG = {
-    "host": os.environ.get("DB_HOST"),
+    "host": os.environ.get("DB_HOST", "localhost"),
     "port": int(os.environ.get("DB_PORT", 3306)),
-    "database": os.environ.get("DB_NAME"),
-    "user": os.environ.get("DB_USER"),
-    "password": os.environ.get("DB_PASSWORD"),
+    "database": os.environ.get("DB_NAME", "landdata"),
+    "user": os.environ.get("DB_USER", "root"),
+    "password": os.environ.get("DB_PASSWORD", "Parth@123"),
     "ssl_disabled": True,
     "client_flags": [ClientFlag.FOUND_ROWS],
 }
 
+# Print configuration info on startup (excluding password for security)
 print(f"Database config: host={DB_CONFIG['host']}, port={DB_CONFIG['port']}, database={DB_CONFIG['database']}, user={DB_CONFIG['user']}", file=sys.stderr)
 
 def get_db_connection():
     try:
         conn = mysql.connector.connect(**DB_CONFIG)
         if conn.is_connected():
-            print("Database connection successful", file=sys.stderr)
             return conn
     except Error as e:
         print(f"Database connection failed: {e}", file=sys.stderr)
