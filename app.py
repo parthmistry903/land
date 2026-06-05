@@ -620,4 +620,4 @@ def change_password():
     return redirect(url_for("view_user", user_id=current_user.id))
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5001, debug=os.environ.get("FLASK_DEBUG", "False").lower() == "true")
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5001)), debug=os.environ.get("FLASK_DEBUG", "False").lower() == "true")
