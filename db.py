@@ -9,7 +9,7 @@ DB_CONFIG = {
     "port": int(os.environ.get("DB_PORT", 3306)),
     "database": os.environ.get("DB_NAME", "landdata"),
     "user": os.environ.get("DB_USER", "root"),
-    "password": os.environ.get("DB_PASSWORD", "Parth@123"),
+    "password": os.environ.get("DB_PASSWORD", "cbeXHgtZsNnRTznMkaqNXsaWXrzWeGPh"),
     "ssl_disabled": True,
     "client_flags": [ClientFlag.FOUND_ROWS],
 }
