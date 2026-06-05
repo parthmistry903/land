@@ -1,6 +1,7 @@
 import mysql.connector
 from mysql.connector import Error, ClientFlag
 import os
+import sys
 
 
 DB_CONFIG = {
@@ -19,7 +20,8 @@ def get_db_connection():
         conn = mysql.connector.connect(**DB_CONFIG)
         if conn.is_connected():
             return conn
-    except Error:
+    except Error as e:
+        print(f"Database connection failed: {e}", file=sys.stderr)
         return None
     return None
 
@@ -39,7 +41,8 @@ def execute_query(sql, params=None, fetch_all=False):
         else:
             conn.commit()
             return True
-    except Error:
+    except Error as e:
+        print(f"Database query failed: {e}", file=sys.stderr)
         return [] if fetch_all else False
     finally:
         if cursor:
