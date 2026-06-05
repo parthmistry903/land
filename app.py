@@ -56,6 +56,10 @@ def format_date(d):
 app.jinja_env.filters["inr"] = format_inr
 app.jinja_env.filters["date"] = format_date
 
+@app.route("/health")
+def health():
+    return "OK", 200
+
 @app.route("/")
 @login_required
 def index():
