@@ -5,11 +5,11 @@ import sys
 
 
 DB_CONFIG = {
-    "host": os.environ.get("DB_HOST", "localhost"),
+    "host": os.environ.get("DB_HOST"),
     "port": int(os.environ.get("DB_PORT", 3306)),
-    "database": os.environ.get("DB_NAME", "landdata"),
-    "user": os.environ.get("DB_USER", "root"),
-    "password": os.environ.get("DB_PASSWORD", "cbeXHgtZsNnRTznMkaqNXsaWXrzWeGPh"),
+    "database": os.environ.get("DB_NAME"),
+    "user": os.environ.get("DB_USER"),
+    "password": os.environ.get("DB_PASSWORD"),
     "ssl_disabled": True,
     "client_flags": [ClientFlag.FOUND_ROWS],
 }
