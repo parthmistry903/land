@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<section class="page-hero">
+  <div class="hero-copy">
+    <div class="section-kicker mb-2">Control route</div>
+    <h1 class="hero-title">Market command</h1>
+    <p class="text-muted mb-0 mt-3">Market activity, user balances, parcels, contracts, and settlement signals in one coordinated cockpit.</p>
+  </div>
+  <div class="d-flex flex-column flex-sm-row gap-2">
+    <a href="{{ url_for('list_options') }}" class="btn btn-primary px-4"><i class="bi bi-lightning-charge-fill"></i>Open Market</a>
+    <a href="{{ url_for('map_page') }}" class="btn btn-outline-secondary px-4"><i class="bi bi-compass"></i>Explore Map</a>
+  </div>
+</section>
+
+<div class="row g-4">
+  <div class="col-12 col-lg-4">
+    <div class="card h-100 stat-tile">
+      <div class="card-body p-4 d-flex flex-column">
+        <div class="d-flex justify-content-between align-items-start mb-3">
+          <div>
+            <div class="section-kicker mb-2">Live market</div>
+            <h5 class="mb-0 fw-bold text-uppercase">Open Options</h5>
+          </div>
+          <span class="badge text-bg-primary fs-6">{{ open_options_count }}</span>
+        </div>
+        <div class="stat-number mt-auto mb-3">{{ open_options_count }}</div>
+        <p class="text-muted mb-4">Active contracts available to trade right now.</p>
+        <a href="{{ url_for('list_options') }}" class="btn btn-outline-primary w-100"><i class="bi bi-arrow-right"></i>View Market</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-4">
+    <div class="card h-100">
+      <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-start mb-4">
+          <div>
+            <div class="section-kicker mb-2">System</div>
+            <h5 class="mb-0 fw-bold text-uppercase">Statistics</h5>
+          </div>
+          <i class="bi bi-graph-up-arrow fs-3 text-primary"></i>
+        </div>
+        <div class="vstack gap-3">
+          <div class="d-flex justify-content-between align-items-center"><span class="text-muted">Users</span><strong>{{ stats.users_count }}</strong></div>
+          <div class="glow-line my-0"></div>
+          <div class="d-flex justify-content-between align-items-center"><span class="text-muted">Parcels</span><strong>{{ stats.parcels_count }}</strong></div>
+          <div class="glow-line my-0"></div>
+          <div class="d-flex justify-content-between align-items-center"><span class="text-muted">Options</span><strong>{{ stats.total_options_count }}</strong></div>
+          <div class="glow-line my-0"></div>
+          <div class="d-flex justify-content-between align-items-center"><span class="text-muted">Trades Executed</span><strong>{{ stats.trades_count }}</strong></div>
+          <div class="glow-line my-0"></div>
+          <div class="d-flex justify-content-between align-items-center"><span class="text-muted">Price Records</span><strong>{{ stats.price_history_count }}</strong></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-4">
+    <div class="card h-100">
+      <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-start mb-4">
+          <div>
+            <div class="section-kicker mb-2">Boarding pass</div>
+            <h5 class="mb-0 fw-bold text-uppercase">Top 5 Users</h5>
+          </div>
+          <i class="bi bi-ticket-perforated-fill fs-3 text-warning"></i>
+        </div>
+        <div class="vstack gap-2">
+          {% for user in users %}
+          <div class="surface subtle d-flex align-items-center justify-content-between gap-3 px-3 py-2">
+            <a href="{{ url_for('view_user', user_id=user.user_id) }}" class="text-decoration-none fw-semibold text-truncate">{{ user.username }}</a>
+            <span class="badge text-bg-success">{{ user.balance_cash | inr }}</span>
+          </div>
+          {% else %}
+          <div class="surface subtle text-center text-muted p-4">No users available.</div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="card border-warning mt-4">
+  <div class="card-body p-4 p-md-5 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-4">
+    <div>
+      <div class="section-kicker text-warning mb-2">End of cycle</div>
+      <h3 class="h2 fw-bold mb-2 text-uppercase">Settlement engine</h3>
+      <p class="text-muted mb-0">Finalize expired options and update cash balances when the cycle closes.</p>
+    </div>
+    <a href="{{ url_for('settle_options') }}" class="btn btn-warning px-4 py-3"><i class="bi bi-play-fill"></i>Open Settlement</a>
+  </div>
+</section>
+{% endblock %}
