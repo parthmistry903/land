@@ -3,6 +3,12 @@ from mysql.connector import Error, ClientFlag
 import os
 import sys
 
+# Validate required environment variables
+required_vars = ["DB_HOST", "DB_NAME", "DB_USER", "DB_PASSWORD"]
+missing_vars = [var for var in required_vars if not os.environ.get(var)]
+if missing_vars:
+    print(f"ERROR: Missing required environment variables: {', '.join(missing_vars)}", file=sys.stderr)
+    sys.exit(1)
 
 DB_CONFIG = {
     "host": os.environ.get("DB_HOST"),
@@ -14,21 +20,23 @@ DB_CONFIG = {
     "client_flags": [ClientFlag.FOUND_ROWS],
 }
 
+print(f"Database config: host={DB_CONFIG['host']}, port={DB_CONFIG['port']}, database={DB_CONFIG['database']}, user={DB_CONFIG['user']}", file=sys.stderr)
 
 def get_db_connection():
     try:
         conn = mysql.connector.connect(**DB_CONFIG)
         if conn.is_connected():
+            print("Database connection successful", file=sys.stderr)
             return conn
     except Error as e:
         print(f"Database connection failed: {e}", file=sys.stderr)
         return None
     return None
 
-
 def execute_query(sql, params=None, fetch_all=False):
     conn = get_db_connection()
     if not conn:
+        print(f"Could not get database connection for query: {sql[:50]}", file=sys.stderr)
         return [] if fetch_all else False
 
     cursor = None
@@ -42,7 +50,7 @@ def execute_query(sql, params=None, fetch_all=False):
             conn.commit()
             return True
     except Error as e:
-        print(f"Database query failed: {e}", file=sys.stderr)
+        print(f"Database query failed: {e} | SQL: {sql[:100]}", file=sys.stderr)
         return [] if fetch_all else False
     finally:
         if cursor:
@@ -50,10 +58,10 @@ def execute_query(sql, params=None, fetch_all=False):
         if conn:
             conn.close()
 
-
 def execute_transaction(queries):
     conn = get_db_connection()
     if not conn:
+        print("Could not get database connection for transaction", file=sys.stderr)
         return False
 
     cursor = None
@@ -64,11 +72,12 @@ def execute_transaction(queries):
         for sql, params in queries:
             cursor.execute(sql, params)
             if sql.strip().upper().startswith("UPDATE") and cursor.rowcount == 0:
-                raise Exception()
+                raise Exception(f"Update affected 0 rows: {sql[:50]}")
 
         conn.commit()
         return True
-    except Exception:
+    except Exception as e:
+        print(f"Transaction failed: {e}", file=sys.stderr)
         conn.rollback()
         return False
     finally:
